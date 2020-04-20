@@ -24,25 +24,27 @@ const Tile: React.FC<Props> = (props) => {
     onMouseUp,
   } = props;
 
-  const tileStyle = () => {
+  const tileClass = () => {
     switch (+state) {
       case TileStatus.NORMAL:
-        return;
+        return "";
       case TileStatus.WALL:
-        return { background: "indianred" };
+        return "wall";
       case TileStatus.ORIGIN:
-        return { background: "lightseagreen" };
+        return "origin";
       case TileStatus.DESTINATION:
-        return { background: "deepskyblue" };
+        return "destination";
+      case TileStatus.PATH:
+        return "path";
       default:
-        return;
+        return "";
     }
   };
 
   return (
     <div
-      className="tile"
-      style={tileStyle()}
+      id={`tile-${row}-${col}`}
+      className={`tile ${tileClass()}`}
       onMouseDown={() => onMouseClick(row, col)}
       onMouseEnter={() => onMouseEnter(row, col)}
       onMouseLeave={() => onMouseLeave(row, col)}

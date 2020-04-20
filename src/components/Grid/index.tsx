@@ -6,14 +6,14 @@ import { TileStatus } from "../../enums/TileStatus";
 
 import "./styles.css";
 import Header from "../Header";
-import AStar from "../../utils/AStar";
-
-interface Point {
-  row: number;
-  col: number;
-}
+import AStar from "../../algorithms/AStar";
+import Dijkstra from "../../algorithms/Dijkstra";
+import { Point } from "../../interfaces/Point";
 
 const Grid: React.FC = () => {
+  const [origin, setOrigin] = useState<Point>({ row: 0, col: 0 });
+  const [destination, setDestination] = useState<Point>({ row: 19, col: 44 });
+
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
   const createGrid = (width: number, height: number) => {
@@ -78,10 +78,27 @@ const Grid: React.FC = () => {
 
   const resetGrid = () => {
     setGrid(createGrid(45, 20));
+    setIsClicked(false);
+  };
+
+  const showPathAnimation = (visitedTiles: Point[], pathTiles: Point[]) => {
+    let gridTmp = grid.slice();
+    console.log(visitedTiles);
+    for (let i = 0; i < visitedTiles.length; i++) {
+      const { row, col } = visitedTiles[i];
+      setTimeout(() => {
+        const current_state = gridTmp[row][col];
+        if (current_state !== TileStatus.NORMAL) return;
+        gridTmp[row][col] = TileStatus.PATH;
+        let tile = document.getElementById(`tile-${row}-${col}`);
+        if (tile) tile.className = "tile path";
+      }, i * 15);
+    }
   };
 
   const run = () => {
-    AStar(grid);
+    const [visitedTiles, pathTiles] = Dijkstra(grid, origin, destination);
+    showPathAnimation(visitedTiles, pathTiles);
   };
 
   return (

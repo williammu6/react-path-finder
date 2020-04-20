@@ -6,3 +6,25 @@
   margin: 0.5px;
   border-radius: 3px;
 }
+
+.wall {
+  background: indianred;
+}
+
+.origin {
+  background: lightseagreen;
+}
+
+.destination {
+  background: deepskyblue;
+}
+
+.path {
+  background: rgb(255, 206, 44);
+  transition: background 0.5s steps(1000, start);
+}
+
+.shortest-path {
+  background: rgb(88, 255, 102);
+  transition: background 0.5s steps(1000, start);
+}
