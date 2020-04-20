@@ -20,11 +20,31 @@
 }
 
 .path {
-  background: rgb(255, 234, 164);
-  transition: background 0.3s steps(1000, start);
+  background: #fff898;
+  animation: path-coloring 2s;
+}
+
+@keyframes path-coloring {
+  0% {
+    background: #a39857;
+    transform: scale(1.3);
+  }
+  100% {
+    background: #fff898;
+  }
 }
 
 .shortest-path {
-  background: rgb(88, 255, 102);
-  transition: background 0.1s steps(1000, start);
+  background: #58ff82;
+  animation: shortest-path-coloring 0.3s;
+}
+
+@keyframes shortest-path-coloring {
+  0% {
+    background: #4e8068;
+    transform: scale(2);
+  }
+  100% {
+    background: #58ff82;
+  }
 }

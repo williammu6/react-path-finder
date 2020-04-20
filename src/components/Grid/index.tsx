@@ -13,6 +13,10 @@ import { Point } from "../../interfaces/Point";
 const Grid: React.FC = () => {
   const [origin, setOrigin] = useState<Point>({ row: 10, col: 5 });
   const [destination, setDestination] = useState<Point>({ row: 10, col: 40 });
+  const [isDraggingOrigin, setIsDraggingOrigin] = useState<boolean>(false);
+  const [isDraggingDestination, setIsDraggingDestination] = useState<boolean>(
+    false
+  );
 
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
@@ -37,12 +41,12 @@ const Grid: React.FC = () => {
 
   const onMouseClickTile = (row: number, col: number) => {
     setIsClicked(true);
-
     const current_state = grid[row][col];
-    if (
-      current_state !== TileStatus.ORIGIN &&
-      current_state !== TileStatus.DESTINATION
-    ) {
+    if (current_state === TileStatus.ORIGIN) {
+      setIsDraggingOrigin(true);
+    } else if (current_state === TileStatus.DESTINATION) {
+      setIsDraggingDestination(true);
+    } else {
       changeStateTile(
         row,
         col,
@@ -56,37 +60,64 @@ const Grid: React.FC = () => {
 
   const onMouseUpTile = (row: number, col: number) => {
     setIsClicked(false);
+    if (isDraggingDestination) setIsDraggingDestination(false);
+    if (isDraggingOrigin) setIsDraggingOrigin(false);
+  };
+
+  const updateGridOrigin = (row: number, col: number) => {
+    let gridTmp = grid;
+    if (gridTmp[row][col] === TileStatus.DESTINATION) return;
+    gridTmp[origin.row][origin.col] = TileStatus.NORMAL;
+    gridTmp[row][col] = TileStatus.ORIGIN;
+    setGrid(gridTmp);
+    setOrigin({ row, col });
+  };
+  const updateGridDestination = (row: number, col: number) => {
+    let gridTmp = grid;
+    if (gridTmp[row][col] === TileStatus.ORIGIN) return;
+    gridTmp[destination.row][destination.col] = TileStatus.NORMAL;
+    gridTmp[row][col] = TileStatus.DESTINATION;
+    setGrid(gridTmp);
+    setDestination({ row, col });
   };
 
   const onMouseEnterTile = (row: number, col: number) => {
     if (isClicked) {
-      const current_state = grid[row][col];
-      if (
-        current_state !== TileStatus.ORIGIN &&
-        current_state !== TileStatus.DESTINATION
-      ) {
-        changeStateTile(
-          row,
-          col,
-          current_state === TileStatus.WALL
-            ? TileStatus.NORMAL
-            : TileStatus.WALL
-        );
-      }
-    }
-  };
-
-  const removePaths = () => {
-    for (let row = 0; row < grid.length; row++) {
-      for (let col = 0; col < grid[0].length; col++) {
+      if (isDraggingOrigin) {
+        updateGridOrigin(row, col);
+      } else if (isDraggingDestination) {
+        updateGridDestination(row, col);
+      } else {
         const current_state = grid[row][col];
-        if (current_state === TileStatus.PATH) {
-          const tile = document.getElementById(`tile-${row}-${col}`);
-          if (tile) tile.className = "tile";
+        if (
+          current_state !== TileStatus.ORIGIN &&
+          current_state !== TileStatus.DESTINATION
+        ) {
+          changeStateTile(
+            row,
+            col,
+            current_state === TileStatus.WALL
+              ? TileStatus.NORMAL
+              : TileStatus.WALL
+          );
         }
       }
     }
   };
+
+  const removePaths = () =>
+    new Promise((resolve, _) => {
+      for (let row = 0; row < grid.length; row++) {
+        for (let col = 0; col < grid[0].length; col++) {
+          const current_state = grid[row][col];
+          if (current_state === TileStatus.PATH) {
+            const tile = document.getElementById(`tile-${row}-${col}`);
+            if (tile) tile.className = "tile";
+          }
+        }
+      }
+      resolve(true);
+    });
 
   const resetTileStates = () => {
     for (let row = 0; row < grid.length; row++) {
@@ -135,7 +166,7 @@ const Grid: React.FC = () => {
 
   const run = async () => {
     const [visitedTiles, pathTiles] = Dijkstra(grid, origin, destination);
-    removePaths();
+    await removePaths();
     await showPathAnimation(visitedTiles, "tile path", 3);
     await showPathAnimation(pathTiles, "tile shortest-path", 20);
   };
