@@ -8,3 +8,10 @@ body {
   font-family: sans-serif;
   background: #e2e2e2;
 }
+
+:focus {
+  outline: none;
+}
+::-moz-focus-inner {
+  border: 0;
+}
