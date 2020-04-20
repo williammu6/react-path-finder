@@ -4,6 +4,11 @@
 
 Work in progress :)
 
+### Algorithms to add
+
+- A\*
+- Dijkstra's algorithm
+
 ![Current stage](screenshot.png)
 
 ### How to use
