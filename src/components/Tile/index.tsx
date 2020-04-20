@@ -29,11 +29,11 @@ const Tile: React.FC<Props> = (props) => {
       case TileStatus.NORMAL:
         return;
       case TileStatus.WALL:
-        return { background: "#333" };
+        return { background: "indianred" };
       case TileStatus.ORIGIN:
-        return { background: "#0F0" };
+        return { background: "lightseagreen" };
       case TileStatus.DESTINATION:
-        return { background: "#00F" };
+        return { background: "deepskyblue" };
       default:
         return;
     }

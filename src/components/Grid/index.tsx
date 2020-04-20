@@ -1,24 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Tile from "../Tile";
 
 import { TileStatus } from "../../enums/TileStatus";
 
 import "./styles.css";
+import Header from "../Header";
+import AStar from "../../utils/AStar";
+
+interface Point {
+  row: number;
+  col: number;
+}
 
 const Grid: React.FC = () => {
-  const [isClicked, setIsClicked] = useState(false);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
 
   const createGrid = (width: number, height: number) => {
     let grid = Array.from({ length: height }, () =>
       Array.from({ length: width }, () => TileStatus.NORMAL)
     );
+
     grid[0][0] = TileStatus.ORIGIN;
     grid[height - 1][width - 1] = TileStatus.DESTINATION;
+
     return grid;
   };
 
-  const [grid, setGrid] = useState(createGrid(40, 25));
+  const [grid, setGrid] = useState<TileStatus[][]>(createGrid(45, 20));
 
   const changeStateTile = (row: number, col: number, state: TileStatus) => {
     let tmpGrid = grid.slice();
@@ -67,8 +76,17 @@ const Grid: React.FC = () => {
     }
   };
 
+  const resetGrid = () => {
+    setGrid(createGrid(45, 20));
+  };
+
+  const run = () => {
+    AStar(grid);
+  };
+
   return (
-    <div className="container">
+    <div className="grid-container">
+      <Header resetGrid={resetGrid} run={run} />
       <div className="grid">
         {grid.map((rows: number[], row: number) => {
           return (
