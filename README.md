@@ -4,6 +4,8 @@
 
 Work in progress :)
 
+<img src="screenshot.png">
+
 ### How to use
 
 ```console
