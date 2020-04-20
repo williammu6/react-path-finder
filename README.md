@@ -1,8 +1,11 @@
 ## Path Finder
 
-##### Developed with React and Typescript
+##### Developed with React and Typescript (work in progress)
 
-Work in progress :)
+### Goals
+
+- Practice React + Typescript
+- Have fun
 
 ### Algorithms to implement
 
