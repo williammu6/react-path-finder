@@ -4,7 +4,7 @@
 
 Work in progress :)
 
-### Algorithms to add
+### Algorithms to implement
 
 - A\*
 - Dijkstra's algorithm
