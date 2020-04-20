@@ -4,7 +4,7 @@
 
 Work in progress :)
 
-![Current stage]("screenshot.png")
+![Current stage]("./screenshot.png")
 
 ### How to use
 
