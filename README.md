@@ -10,7 +10,7 @@
 ### Algorithms to implement
 
 - A\*
-- Dijkstra's algorithm
+- [Dijkstra's] OK
 
 ![Current stage](screenshot2.png)
 
