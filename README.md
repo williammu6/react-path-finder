@@ -4,7 +4,7 @@
 
 Work in progress :)
 
-<img src="screenshot.png">
+![Current stage]("screenshot.png")
 
 ### How to use
 
