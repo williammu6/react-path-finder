@@ -12,7 +12,7 @@
 - A\*
 - Dijkstra's algorithm
 
-![Current stage](screenshot.png)
+![Current stage](screenshot2.png)
 
 ### How to use
 
