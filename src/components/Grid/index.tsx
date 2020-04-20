@@ -11,8 +11,8 @@ import Dijkstra from "../../algorithms/Dijkstra";
 import { Point } from "../../interfaces/Point";
 
 const Grid: React.FC = () => {
-  const [origin, setOrigin] = useState<Point>({ row: 0, col: 0 });
-  const [destination, setDestination] = useState<Point>({ row: 19, col: 44 });
+  const [origin, setOrigin] = useState<Point>({ row: 10, col: 5 });
+  const [destination, setDestination] = useState<Point>({ row: 10, col: 40 });
 
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
@@ -21,8 +21,8 @@ const Grid: React.FC = () => {
       Array.from({ length: width }, () => TileStatus.NORMAL)
     );
 
-    grid[0][0] = TileStatus.ORIGIN;
-    grid[height - 1][width - 1] = TileStatus.DESTINATION;
+    grid[origin.row][origin.col] = TileStatus.ORIGIN;
+    grid[destination.row][destination.col] = TileStatus.DESTINATION;
 
     return grid;
   };
@@ -76,29 +76,68 @@ const Grid: React.FC = () => {
     }
   };
 
-  const resetGrid = () => {
-    setGrid(createGrid(45, 20));
-    setIsClicked(false);
-  };
-
-  const showPathAnimation = (visitedTiles: Point[], pathTiles: Point[]) => {
-    let gridTmp = grid.slice();
-    console.log(visitedTiles);
-    for (let i = 0; i < visitedTiles.length; i++) {
-      const { row, col } = visitedTiles[i];
-      setTimeout(() => {
-        const current_state = gridTmp[row][col];
-        if (current_state !== TileStatus.NORMAL) return;
-        gridTmp[row][col] = TileStatus.PATH;
-        let tile = document.getElementById(`tile-${row}-${col}`);
-        if (tile) tile.className = "tile path";
-      }, i * 15);
+  const removePaths = () => {
+    for (let row = 0; row < grid.length; row++) {
+      for (let col = 0; col < grid[0].length; col++) {
+        const current_state = grid[row][col];
+        if (current_state === TileStatus.PATH) {
+          const tile = document.getElementById(`tile-${row}-${col}`);
+          if (tile) tile.className = "tile";
+        }
+      }
     }
   };
 
-  const run = () => {
+  const resetTileStates = () => {
+    for (let row = 0; row < grid.length; row++) {
+      for (let col = 0; col < grid[0].length; col++) {
+        const current_state = grid[row][col];
+        if (
+          current_state === TileStatus.ORIGIN ||
+          current_state === TileStatus.DESTINATION
+        )
+          continue;
+        const tile = document.getElementById(`tile-${row}-${col}`);
+        if (tile) tile.className = "tile";
+      }
+    }
+  };
+
+  const resetGrid = () => {
+    setGrid(createGrid(45, 20));
+    resetTileStates();
+    setIsClicked(false);
+  };
+
+  const showPathAnimation = async (
+    tiles: Point[],
+    className: string,
+    delay: number
+  ) =>
+    new Promise((resolve, reject) => {
+      let gridTmp = grid.slice();
+      for (let i = 0; i < tiles.length; i++) {
+        const { row, col } = tiles[i];
+        setTimeout(() => {
+          const current_state = gridTmp[row][col];
+          if (
+            current_state !== TileStatus.NORMAL &&
+            current_state !== TileStatus.PATH
+          )
+            return;
+          gridTmp[row][col] = TileStatus.PATH;
+          let tile = document.getElementById(`tile-${row}-${col}`);
+          if (tile) tile.className = className;
+          if (i >= tiles.length - 3) resolve(true);
+        }, i * delay);
+      }
+    });
+
+  const run = async () => {
     const [visitedTiles, pathTiles] = Dijkstra(grid, origin, destination);
-    showPathAnimation(visitedTiles, pathTiles);
+    removePaths();
+    await showPathAnimation(visitedTiles, "tile path", 3);
+    await showPathAnimation(pathTiles, "tile shortest-path", 20);
   };
 
   return (

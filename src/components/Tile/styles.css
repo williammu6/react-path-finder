@@ -20,11 +20,11 @@
 }
 
 .path {
-  background: rgb(255, 206, 44);
-  transition: background 0.5s steps(1000, start);
+  background: rgb(255, 234, 164);
+  transition: background 0.3s steps(1000, start);
 }
 
 .shortest-path {
   background: rgb(88, 255, 102);
-  transition: background 0.5s steps(1000, start);
+  transition: background 0.1s steps(1000, start);
 }

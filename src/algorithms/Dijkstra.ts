@@ -8,20 +8,28 @@ const Dijkstra = (grid: TileStatus[][], origin: Point, destination: Point) => {
   const width = grid[0].length;
   const height = grid.length;
 
+  var traversalTree: Point[][] = Array.from({ length: height }, () =>
+    Array.from({ length: width })
+  );
+
   let q: Point[] = [];
 
   q.push(origin);
+
+  const isWall = (grid: TileStatus[][], point: Point): boolean => {
+    return grid[point.row][point.col] === TileStatus.WALL;
+  };
 
   const isValid = (point: Point) => {
     return (
       point.row >= 0 &&
       point.col >= 0 &&
-      point.row < width &&
-      point.col < height
+      point.row < height &&
+      point.col < width
     );
   };
 
-  const isVisited = (point: Point): boolean => {
+  const isVisited = (visitedTiles: Point[], point: Point): boolean => {
     const visited = !!visitedTiles.filter(
       (p) => p.row === point.row && p.col === point.col
     ).length;
@@ -31,8 +39,8 @@ const Dijkstra = (grid: TileStatus[][], origin: Point, destination: Point) => {
   const getNeighbors = (grid: TileStatus[][], location: Point): Point[] => {
     let neighbors: Point[] = [];
     const directions = [
-      [0, 1],
       [1, 0],
+      [0, 1],
       [-1, 0],
       [0, -1],
     ];
@@ -42,32 +50,41 @@ const Dijkstra = (grid: TileStatus[][], origin: Point, destination: Point) => {
         row: location.row + dir[0],
         col: location.col + dir[1],
       };
-      if (isValid(point)) {
-        neighbors.push(point);
-      }
+      if (isValid(point)) neighbors.push(point);
     }
     return neighbors;
   };
 
+  const getOptimalPath = (traversalTree: Point[][], point: Point): Point[] => {
+    if (!traversalTree[point.row][point.col]) return pathTiles.reverse();
+
+    pathTiles.push(point);
+
+    return getOptimalPath(traversalTree, traversalTree[point.row][point.col]);
+  };
+
   while (q.length) {
     const currentLocation = q.shift() as Point;
+
     visitedTiles.push(currentLocation);
+
     const neighbors = getNeighbors(grid, currentLocation);
+
     for (let neighbor of neighbors) {
-      if (!isVisited(neighbor)) {
-        if (neighbor === destination) {
-          // Is destination
-          return [visitedTiles, pathTiles];
-        } else {
-          // Is not destination
-          q.push(neighbor);
+      if (!isVisited(visitedTiles, neighbor)) {
+        visitedTiles.push(neighbor);
+        traversalTree[neighbor.row][neighbor.col] = currentLocation;
+        if (
+          neighbor.col === destination.col &&
+          neighbor.row === destination.row
+        ) {
+          return [visitedTiles, getOptimalPath(traversalTree, destination)];
         }
+        if (!isWall(grid, neighbor)) q.push(neighbor);
       }
     }
-    if (visitedTiles.length > 300) break;
   }
-
-  return [visitedTiles, pathTiles];
+  return [visitedTiles, getOptimalPath(traversalTree, destination)];
 };
 
 export default Dijkstra;
