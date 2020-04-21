@@ -20,17 +20,16 @@
 }
 
 .path {
-  background: #f2ffc1;
+  background: #ccc;
   animation: path-coloring 2s;
 }
 
 @keyframes path-coloring {
   0% {
-    background: #9ea781;
-    transform: scale(1.3);
+    background: #9773FF;
   }
   100% {
-    background: #f2ffc1;
+    background: #ccc;
   }
 }
 
@@ -42,7 +41,7 @@
 @keyframes shortest-path-coloring {
   0% {
     background: #4e8068;
-    transform: scale(2);
+    transform: scale(1.4);
   }
   100% {
     background: #58ff82;

@@ -164,8 +164,8 @@ const Grid: React.FC = () => {
       }
     });
 
-  const run = async () => {
-    const [visitedTiles, pathTiles] = Dijkstra(grid, origin, destination);
+  const run = async (algorithm: Function) => {
+    const [visitedTiles, pathTiles] = algorithm(grid, origin, destination);
     await removePaths();
     await showPathAnimation(visitedTiles, "tile path", 3);
     await showPathAnimation(pathTiles, "tile shortest-path", 20);

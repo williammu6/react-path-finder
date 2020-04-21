@@ -12,7 +12,7 @@
 - A\*
 - [Dijkstra's] OK
 
-![Current stage](screenshot2.png)
+![Current stage](./screenshot3.png)
 
 ### How to use
 
