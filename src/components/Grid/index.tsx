@@ -113,13 +113,15 @@ const Grid: React.FC = () => {
           current_state !== TileState.ORIGIN &&
           current_state !== TileState.DESTINATION
         ) {
-          if (ignoreWhenPath(current_state)) return;
+          const newState = stateTileClicked === TileState.NORMAL
+                  || stateTileClicked === TileState.PATH
+                ? TileState.WALL
+                : TileState.NORMAL;
+          console.log("change state to ", stateTileClicked);
           changeStateTile(
             row,
             col,
-            current_state === TileState.WALL
-              ? TileState.NORMAL
-              : TileState.WALL
+            newState
           );
         }
       }
@@ -162,8 +164,7 @@ const Grid: React.FC = () => {
   };
 
   const showPathAnimation = async (
-    tiles: Point[],
-    className: string,
+    tiles: Point[], className: string,
     delay: number
   ) =>
     new Promise((resolve, reject) => {
