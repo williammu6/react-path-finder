@@ -117,7 +117,6 @@ const Grid: React.FC = () => {
                   || stateTileClicked === TileState.PATH
                 ? TileState.WALL
                 : TileState.NORMAL;
-          console.log("change state to ", stateTileClicked);
           changeStateTile(
             row,
             col,
