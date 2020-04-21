@@ -15,6 +15,9 @@ import { Point } from "../../interfaces/Point";
 import {Algorithm} from "../../interfaces/Algorithm";
 
 const Grid: React.FC = () => {
+  const width = 45;
+  const height = 20;
+
   const [origin, setOrigin] = useState<Point>({ row: 10, col: 5 });
   const [destination, setDestination] = useState<Point>({ row: 10, col: 40 });
   const [stateTileClicked, setStateTileClicked] = useState<TileState>();
@@ -41,7 +44,7 @@ const Grid: React.FC = () => {
     return grid;
   };
 
-  const [grid, setGrid] = useState<TileState[][]>(createGrid(45, 20));
+  const [grid, setGrid] = useState<TileState[][]>(createGrid(width, height));
 
   const changeStateTile = (row: number, col: number, state: TileState) => {
     let tmpGrid = grid.slice();
@@ -66,7 +69,6 @@ const Grid: React.FC = () => {
     }
   };
   const onMouseLeaveTile = (row: number, col: number) => {
-    // console.log(`Left ${row}, ${col}`);
   };
 
   const onMouseUpTile = (row: number, col: number) => {
@@ -93,6 +95,7 @@ const Grid: React.FC = () => {
   };
 
   const onMouseEnterTile = (row: number, col: number) => {
+
     if (isClicked) {
       if (isDraggingOrigin) {
         updateGridOrigin(row, col);
@@ -100,11 +103,13 @@ const Grid: React.FC = () => {
         updateGridDestination(row, col);
       } else {
         const current_state = grid[row][col];
-        if (current_state !== stateTileClicked) return;
         if (
           current_state !== TileState.ORIGIN &&
           current_state !== TileState.DESTINATION
         ) {
+          if (current_state !== stateTileClicked &&
+              stateTileClicked !== TileState.PATH &&
+              current_state !== TileState.PATH) return;
           changeStateTile(
             row,
             col,
@@ -147,7 +152,7 @@ const Grid: React.FC = () => {
   };
 
   const resetGrid = () => {
-    setGrid(createGrid(45, 20));
+    setGrid(createGrid(width, height));
     resetTileStates();
     setIsClicked(false);
   };
