@@ -1,4 +1,4 @@
-export enum TileStatus {
+export enum TileState {
   NORMAL = 0,
   WALL = 1,
   PATH = 2,

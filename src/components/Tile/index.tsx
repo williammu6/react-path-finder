@@ -1,12 +1,12 @@
 import React from "react";
 
 import "./styles.css";
-import { TileStatus } from "../../enums/TileStatus";
+import { TileState } from "../../enums/TileState";
 
 interface Props {
   row: number;
   col: number;
-  state: TileStatus;
+  state: TileState;
   onMouseClick(row: number, col: number): void;
   onMouseEnter(row: number, col: number): void;
   onMouseLeave(row: number, col: number): void;
@@ -26,15 +26,15 @@ const Tile: React.FC<Props> = (props) => {
 
   const tileClass = () => {
     switch (+state) {
-      case TileStatus.NORMAL:
+      case TileState.NORMAL:
         return "";
-      case TileStatus.WALL:
+      case TileState.WALL:
         return "wall";
-      case TileStatus.ORIGIN:
+      case TileState.ORIGIN:
         return "origin";
-      case TileStatus.DESTINATION:
+      case TileState.DESTINATION:
         return "destination";
-      case TileStatus.PATH:
+      case TileState.PATH:
         return "path";
       default:
         return "";

@@ -3,23 +3,18 @@ import React, { useState } from "react";
 import "./styles.css";
 import Button from "../../styled-components/Button";
 import Select from "../../styled-components/Select";
-import AStar from "../../algorithms/AStar";
-import Dijkstra from "../../algorithms/Dijkstra";
+import {Algorithm} from "../../interfaces/Algorithm";
 
 interface Props {
   resetGrid(): void;
-  run(algorithm: Function): void;
+  algorithms: Algorithm[];
+  run(index: number): void;
 }
 
 const Header: React.FC<Props> = (props) => {
-  const { resetGrid, run } = props;
+  const { resetGrid, run, algorithms } = props;
 
   const [index, setIndex] = useState<number>(0);
-
-  const algorithms = [
-    { value: 0, label: "A* algorithm", algorithm: AStar },
-    { value: 1, label: "Dijkstra's algorithm", algorithm: Dijkstra },
-  ];
 
   const onAlgorithmChange = (e: any) => {
     setIndex(e.target.value);
@@ -34,7 +29,7 @@ const Header: React.FC<Props> = (props) => {
           </option>
         ))}
       </Select>
-      <Button onClick={() => run(algorithms[index].algorithm)}>Run</Button>
+      <Button onClick={() => run(index)}>Run</Button>
       <Button onClick={() => resetGrid()}>Reset</Button>
     </div>
   );

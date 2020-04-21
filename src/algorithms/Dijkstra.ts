@@ -1,7 +1,7 @@
-import { TileStatus } from "../enums/TileStatus";
+import { TileState } from "../enums/TileState";
 import { Point } from "../interfaces/Point";
 
-const Dijkstra = (grid: TileStatus[][], origin: Point, destination: Point) => {
+const Dijkstra = (grid: TileState[][], origin: Point, destination: Point) => {
   let visitedTiles: Point[] = [];
   let pathTiles: Point[] = [];
 
@@ -16,8 +16,8 @@ const Dijkstra = (grid: TileStatus[][], origin: Point, destination: Point) => {
 
   q.push(origin);
 
-  const isWall = (grid: TileStatus[][], point: Point): boolean => {
-    return grid[point.row][point.col] === TileStatus.WALL;
+  const isWall = (grid: TileState[][], point: Point): boolean => {
+    return grid[point.row][point.col] === TileState.WALL;
   };
 
   const isValid = (point: Point) => {
@@ -36,7 +36,7 @@ const Dijkstra = (grid: TileStatus[][], origin: Point, destination: Point) => {
     return visited;
   };
 
-  const getNeighbors = (grid: TileStatus[][], location: Point): Point[] => {
+  const getNeighbors = (grid: TileState[][], location: Point): Point[] => {
     let neighbors: Point[] = [];
     const directions = [
       [1, 0],
