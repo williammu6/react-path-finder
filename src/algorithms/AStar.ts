@@ -12,10 +12,6 @@ const AStar = (grid: TileState[][], origin: Point, destination: Point) => {
     Array.from({ length: width })
   );
 
-  let q: Point[] = [];
-
-  q.push(origin);
-
   const isWall = (grid: TileState[][], point: Point): boolean => {
     return grid[point.row][point.col] === TileState.WALL;
   };
@@ -55,6 +51,10 @@ const AStar = (grid: TileState[][], origin: Point, destination: Point) => {
     return neighbors;
   };
 
+  const isDestination = (point: Point): boolean => {
+    return point.row === destination.row && point.col === destination.col;
+  }
+
   const getOptimalPath = (traversalTree: Point[][], point: Point): Point[] => {
     if (!traversalTree[point.row][point.col]) return pathTiles.reverse();
 
@@ -63,10 +63,24 @@ const AStar = (grid: TileState[][], origin: Point, destination: Point) => {
     return getOptimalPath(traversalTree, traversalTree[point.row][point.col]);
   };
 
+  const manhattanDistance = (a: Point, b: Point) => (Math.abs(a.row - b.row) + Math.abs(a.col - b.col));
+
+  const neighborInQueue = (point: Point): boolean => {
+    return !!q.filter(p => p.row === point.row && p.col === point.col).length;
+  }
+
+  let q: Point[] = [];
+
+  q.push(origin);
+
+
   while (q.length) {
     const currentLocation = q.shift() as Point;
 
     visitedTiles.push(currentLocation);
+
+    if (isDestination(currentLocation))
+      return [visitedTiles, getOptimalPath(traversalTree, destination)];
 
     const neighbors = getNeighbors(grid, currentLocation);
 
@@ -74,17 +88,11 @@ const AStar = (grid: TileState[][], origin: Point, destination: Point) => {
       if (!isVisited(visitedTiles, neighbor)) {
         visitedTiles.push(neighbor);
         traversalTree[neighbor.row][neighbor.col] = currentLocation;
-        if (
-          neighbor.col === destination.col &&
-          neighbor.row === destination.row
-        ) {
-          return [visitedTiles, getOptimalPath(traversalTree, destination)];
-        }
         if (!isWall(grid, neighbor)) q.push(neighbor);
       }
     }
   }
-  return [visitedTiles, getOptimalPath(traversalTree, destination)];
+  return [visitedTiles, []];
 };
 
 export default AStar;

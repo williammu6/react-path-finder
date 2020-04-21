@@ -55,6 +55,10 @@ const Dijkstra = (grid: TileState[][], origin: Point, destination: Point) => {
     return neighbors;
   };
 
+  const isDestination = (point: Point): boolean => {
+    return point.row === destination.row && point.col === destination.col;
+  }
+
   const getOptimalPath = (traversalTree: Point[][], point: Point): Point[] => {
     if (!traversalTree[point.row][point.col]) return pathTiles.reverse();
 
@@ -74,12 +78,9 @@ const Dijkstra = (grid: TileState[][], origin: Point, destination: Point) => {
       if (!isVisited(visitedTiles, neighbor)) {
         visitedTiles.push(neighbor);
         traversalTree[neighbor.row][neighbor.col] = currentLocation;
-        if (
-          neighbor.col === destination.col &&
-          neighbor.row === destination.row
-        ) {
+        if (isDestination(neighbor))
           return [visitedTiles, getOptimalPath(traversalTree, destination)];
-        }
+
         if (!isWall(grid, neighbor)) q.push(neighbor);
       }
     }
