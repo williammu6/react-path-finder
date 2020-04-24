@@ -1,6 +1,12 @@
 import { TileState } from "../enums/TileState";
 import { Point } from "../interfaces/Point";
 
+interface Costs {
+  H: number;
+  F: number;
+  G: number;
+}
+
 const AStar = (grid: TileState[][], origin: Point, destination: Point) => {
   let visitedTiles: Point[] = [];
   let pathTiles: Point[] = [];
@@ -11,6 +17,10 @@ const AStar = (grid: TileState[][], origin: Point, destination: Point) => {
   var traversalTree: Point[][] = Array.from({ length: height }, () =>
     Array.from({ length: width })
   );
+
+  let q = [];
+
+  q.push(origin);
 
   const isWall = (grid: TileState[][], point: Point): boolean => {
     return grid[point.row][point.col] === TileState.WALL;
@@ -32,7 +42,7 @@ const AStar = (grid: TileState[][], origin: Point, destination: Point) => {
     return visited;
   };
 
-  const getNeighbors = (grid: TileState[][], location: Point): Point[] => {
+  const getNeighbors = (location: Point): Point[] => {
     let neighbors: Point[] = [];
     const directions = [
       [1, 0],
@@ -53,46 +63,64 @@ const AStar = (grid: TileState[][], origin: Point, destination: Point) => {
 
   const isDestination = (point: Point): boolean => {
     return point.row === destination.row && point.col === destination.col;
-  }
-
-  const getOptimalPath = (traversalTree: Point[][], point: Point): Point[] => {
-    if (!traversalTree[point.row][point.col]) return pathTiles.reverse();
-
-    pathTiles.push(point);
-
-    return getOptimalPath(traversalTree, traversalTree[point.row][point.col]);
   };
 
-  const manhattanDistance = (a: Point, b: Point) => (Math.abs(a.row - b.row) + Math.abs(a.col - b.col));
+  const calculateH = (point: Point, target: Point): number => {
+    return (Math.abs(point.col-target.col) + (Math.abs(point.row - target.row)));
+  }
+  var costs: Costs[][] = Array.from({ length: height }, () =>
+    Array.from({ length: width }, () => ({H: 1e9, F: 1e9, G: 1e9}) )
+  );
 
-  const neighborInQueue = (point: Point): boolean => {
-    return !!q.filter(p => p.row === point.row && p.col === point.col).length;
+  const calculateCost = (point: Point, target: Point): Costs => {
+
+    const G = Math.sqrt( (point.col-origin.col)**2 + (point.row-origin.row)**2);
+    const H = calculateH(point, target);
+    const F = G + H;
+
+    return { G, H, F};
   }
 
-  let q: Point[] = [];
+  const getCostByPoint = (point: Point): Costs => costs[point.row][point.col];
 
-  q.push(origin);
+  const getBestPoint = (q: Point[]):Point => {
+    let bestPoint = q[0];
+    q.forEach(p => {
+      if (getCostByPoint(p).F <= getCostByPoint(bestPoint).F) {
+        bestPoint = p;
+      }
+    });
+    return bestPoint;
+  }
 
+
+  costs[origin.row][origin.col] = calculateCost(origin, destination);
 
   while (q.length) {
-    const currentLocation = q.shift() as Point;
+    
+    const currentPoint = getBestPoint(q);
 
-    visitedTiles.push(currentLocation);
+    q = q.filter(p => p.row !== currentPoint.row && p.col !== currentPoint.col);
 
-    if (isDestination(currentLocation))
-      return [visitedTiles, getOptimalPath(traversalTree, destination)];
+    if (isDestination(currentPoint)) {
+      return [visitedTiles, []];
+    }
 
-    const neighbors = getNeighbors(grid, currentLocation);
+    visitedTiles.push(currentPoint);
+
+    const neighbors = getNeighbors(currentPoint);
 
     for (let neighbor of neighbors) {
-      if (!isVisited(visitedTiles, neighbor)) {
-        visitedTiles.push(neighbor);
-        traversalTree[neighbor.row][neighbor.col] = currentLocation;
-        if (!isWall(grid, neighbor)) q.push(neighbor);
+
+      if (!isWall(grid, neighbor) && !isVisited(visitedTiles, neighbor) ) {
+        if (!q.includes(neighbor)) {
+          q.push(neighbor);
+        }
+        costs[neighbor.row][neighbor.col] = calculateCost(neighbor, destination);       
       }
     }
   }
-  return [visitedTiles, []];
+  return [visitedTiles,[]];
 };
 
 export default AStar;
