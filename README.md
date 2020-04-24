@@ -4,6 +4,8 @@
 TODOS:
 - Fix A* algorithm
 - Better organize structures
+- Performance issues
+- Use Redux to control states?
 
 
 ### Goals
