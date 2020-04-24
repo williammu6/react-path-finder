@@ -7,10 +7,12 @@
 - Practice React + Typescript
 - Have fun
 
-### Algorithms to implement
+### Pathfinding Algorithms
 
-- A\*
-- [Dijkstra's] OK
+TODO: Better organize structures
+
+- A\* algorithm
+- [Dijkstra's] algorithm
 
 ![Current stage](./screenshots/screenshot3.png)
 
