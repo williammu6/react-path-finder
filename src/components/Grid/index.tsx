@@ -92,14 +92,6 @@ const Grid: React.FC = () => {
     setDestination({ row, col });
   };
 
-  const ignoreWhenPath = (current_state: TileState): boolean => {
-    return (
-      current_state !== stateTileClicked &&
-      stateTileClicked !== TileState.PATH &&
-      current_state !== TileState.PATH
-    );
-  };
-
   const onMouseEnterTile = (row: number, col: number) => {
     if (isClicked) {
       if (isDraggingOrigin) {
