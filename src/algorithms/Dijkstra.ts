@@ -1,9 +1,26 @@
 import { TileState } from "../enums/TileState";
 import { Point } from "../interfaces/Point";
+import {
+  isWall,
+  isVisited,
+  getNeighbors,
+  isDestination,
+} from "../utils/pathFinding";
+
+const getPath = (
+  traversalTree: Point[][],
+  point: Point,
+  path: Point[] = []
+): Point[] => {
+  if (!traversalTree[point.row][point.col]) return path.reverse();
+
+  path.push(point);
+
+  return getPath(traversalTree, traversalTree[point.row][point.col], path);
+};
 
 const Dijkstra = (grid: TileState[][], origin: Point, destination: Point) => {
   let visitedTiles: Point[] = [];
-  let pathTiles: Point[] = [];
 
   const width = grid[0].length;
   const height = grid.length;
@@ -16,76 +33,25 @@ const Dijkstra = (grid: TileState[][], origin: Point, destination: Point) => {
 
   q.push(origin);
 
-  const isWall = (grid: TileState[][], point: Point): boolean => {
-    return grid[point.row][point.col] === TileState.WALL;
-  };
-
-  const isValid = (point: Point) => {
-    return (
-      point.row >= 0 &&
-      point.col >= 0 &&
-      point.row < height &&
-      point.col < width
-    );
-  };
-
-  const isVisited = (visitedTiles: Point[], point: Point): boolean => {
-    const visited = !!visitedTiles.filter(
-      (p) => p.row === point.row && p.col === point.col
-    ).length;
-    return visited;
-  };
-
-  const getNeighbors = (grid: TileState[][], location: Point): Point[] => {
-    let neighbors: Point[] = [];
-    const directions = [
-      [1, 0],
-      [0, 1],
-      [-1, 0],
-      [0, -1],
-    ];
-
-    for (let dir of directions) {
-      const point: Point = {
-        row: location.row + dir[0],
-        col: location.col + dir[1],
-      };
-      if (isValid(point)) neighbors.push(point);
-    }
-    return neighbors;
-  };
-
-  const isDestination = (point: Point): boolean => {
-    return point.row === destination.row && point.col === destination.col;
-  }
-
-  const getOptimalPath = (traversalTree: Point[][], point: Point): Point[] => {
-    if (!traversalTree[point.row][point.col]) return pathTiles.reverse();
-
-    pathTiles.push(point);
-
-    return getOptimalPath(traversalTree, traversalTree[point.row][point.col]);
-  };
-
   while (q.length) {
     const currentLocation = q.shift() as Point;
 
     visitedTiles.push(currentLocation);
 
-    const neighbors = getNeighbors(grid, currentLocation);
+    const neighbors = getNeighbors(currentLocation, grid);
 
     for (let neighbor of neighbors) {
       if (!isVisited(visitedTiles, neighbor)) {
         visitedTiles.push(neighbor);
         traversalTree[neighbor.row][neighbor.col] = currentLocation;
-        if (isDestination(neighbor))
-          return [visitedTiles, getOptimalPath(traversalTree, destination)];
+        if (isDestination(neighbor, destination))
+          return [visitedTiles, getPath(traversalTree, destination)];
 
         if (!isWall(grid, neighbor)) q.push(neighbor);
       }
     }
   }
-  return [visitedTiles, getOptimalPath(traversalTree, destination)];
+  return [visitedTiles, []];
 };
 
 export default Dijkstra;

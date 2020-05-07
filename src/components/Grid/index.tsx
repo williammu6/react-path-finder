@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 
 import Tile from "../Tile";
 
-
 import Header from "../Header";
 
 import "./styles.css";
@@ -12,7 +11,7 @@ import Dijkstra from "../../algorithms/Dijkstra";
 
 import { TileState } from "../../enums/TileState";
 import { Point } from "../../interfaces/Point";
-import {Algorithm} from "../../interfaces/Algorithm";
+import { Algorithm } from "../../interfaces/Algorithm";
 
 const Grid: React.FC = () => {
   const width = 45;
@@ -30,7 +29,7 @@ const Grid: React.FC = () => {
 
   const algorithms: Algorithm[] = [
     { value: 0, label: "A* algorithm", algorithm: AStar },
-    { value: 1, label: "Dijkstra's algorithm", algorithm: Dijkstra }
+    { value: 1, label: "Dijkstra's algorithm", algorithm: Dijkstra },
   ];
 
   const createGrid = (width: number, height: number) => {
@@ -68,8 +67,7 @@ const Grid: React.FC = () => {
       );
     }
   };
-  const onMouseLeaveTile = (row: number, col: number) => {
-  };
+  const onMouseLeaveTile = (row: number, col: number) => {};
 
   const onMouseUpTile = (row: number, col: number) => {
     setIsClicked(false);
@@ -94,12 +92,13 @@ const Grid: React.FC = () => {
     setDestination({ row, col });
   };
 
-  const ignoreWhenPath = (current_state: TileState):boolean => {
-    return current_state !== stateTileClicked &&
-              stateTileClicked !== TileState.PATH &&
-              current_state !== TileState.PATH;
-  }
-
+  const ignoreWhenPath = (current_state: TileState): boolean => {
+    return (
+      current_state !== stateTileClicked &&
+      stateTileClicked !== TileState.PATH &&
+      current_state !== TileState.PATH
+    );
+  };
 
   const onMouseEnterTile = (row: number, col: number) => {
     if (isClicked) {
@@ -113,15 +112,12 @@ const Grid: React.FC = () => {
           current_state !== TileState.ORIGIN &&
           current_state !== TileState.DESTINATION
         ) {
-          const newState = stateTileClicked === TileState.NORMAL
-                  || stateTileClicked === TileState.PATH
-                ? TileState.WALL
-                : TileState.NORMAL;
-          changeStateTile(
-            row,
-            col,
-            newState
-          );
+          const newState =
+            stateTileClicked === TileState.NORMAL ||
+            stateTileClicked === TileState.PATH
+              ? TileState.WALL
+              : TileState.NORMAL;
+          changeStateTile(row, col, newState);
         }
       }
     }
@@ -163,7 +159,8 @@ const Grid: React.FC = () => {
   };
 
   const showPathAnimation = async (
-    tiles: Point[], className: string,
+    tiles: Point[],
+    className: string,
     delay: number
   ) =>
     new Promise((resolve, reject) => {
